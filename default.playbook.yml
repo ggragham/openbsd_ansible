@@ -1,0 +1,15 @@
+---
+- name: Configure OpenBSD
+  hosts: all
+  gather_facts: false
+  become_method: doas
+
+  vars_files:
+    - vars.yml
+
+  vars:
+    assets_path: '{{ playbook_dir }}/assets'
+    files_path: '{{ playbook_dir }}/files'
+    handlers_path: '{{ playbook_dir }}/handlers'
+    tasks_path: '{{ playbook_dir }}/tasks'
+    templates_path: '{{ playbook_dir }}/templates'

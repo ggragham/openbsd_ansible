@@ -1,0 +1,33 @@
+---
+- name: Set sysctl parameters
+  sysctl:
+    name: '{{ item }}'
+    value: '0'
+    state: present
+    reload: true
+    sysctl_file: /etc/sysctl.conf
+  loop:
+    - kern.audio.record
+    - kern.video.record
+  become: true
+
+- name: Configure umask
+  lineinfile:
+    path: /etc/profile
+    regexp: ^umask
+    line: umask 027
+    owner: root
+    group: wheel
+    mode: '0640'
+    create: true
+  become: true
+
+- name: Set directory permissions
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: '0700'
+  loop:
+    - /home/{{ USERNAME }}
+    - /home/{{ USERNAME }}/.ssh
+  become: true

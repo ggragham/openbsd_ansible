@@ -47,3 +47,14 @@ Temporary Items
 
 # Other
 ./tmp
+
+assets/*
+!assets/README.md
+.external_roles/
+
+inventory.yml
+inventory.ini
+*vars.yml
+!default.vars.yml
+*playbook.yml
+!default.playbook.yml

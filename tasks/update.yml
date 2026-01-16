@@ -1,0 +1,16 @@
+---
+- name: Apply all available system patches
+  syspatch:
+  become: true
+
+- name: Update all packages on the system
+  openbsd_pkg:
+    name: '*'
+    state: latest
+  become: true
+
+- name: Remove all unused dependencies
+  openbsd_pkg:
+    name: '*'
+    autoremove: true
+  become: true

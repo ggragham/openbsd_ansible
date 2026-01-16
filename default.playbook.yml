@@ -13,3 +13,8 @@
     handlers_path: '{{ playbook_dir }}/handlers'
     tasks_path: '{{ playbook_dir }}/tasks'
     templates_path: '{{ playbook_dir }}/templates'
+
+  tasks:
+    - name: Update OpenBSD
+      include_tasks: '{{ tasks_path }}/update.yml'
+      tags: udpate

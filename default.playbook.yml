@@ -17,4 +17,4 @@
   tasks:
     - name: Update OpenBSD
       include_tasks: '{{ tasks_path }}/update.yml'
-      tags: udpate
+      tags: update

@@ -1,0 +1,6 @@
+---
+- name: Install PKGs
+  openbsd_pkg:
+    name: '{{ PKGS_LIST }}'
+    state: latest
+  become: true

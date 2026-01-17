@@ -5,6 +5,7 @@
   become_method: doas
 
   vars_files:
+    - vars/main.yml
     - vars.yml
 
   vars:

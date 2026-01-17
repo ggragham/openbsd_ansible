@@ -31,3 +31,45 @@
     - /home/{{ USERNAME }}
     - /home/{{ USERNAME }}/.ssh
   become: true
+
+- name: Harden sshd config
+  block:
+    - name: Create sshd config directory
+      file:
+        path: /etc/ssh/sshd_config.d
+        state: directory
+        owner: root
+        group: wheel
+        mode: '0700'
+        recurse: true
+
+    - name: Ensure sshd includes config directory
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        line: Include /etc/ssh/sshd_config.d/*.conf
+        state: present
+        insertafter: EOF
+
+    - name: Disable default sshd settings
+      replace:
+        path: /etc/ssh/sshd_config
+        regexp: ^\s*({{ item }}.*)
+        replace: '# \1'
+      with_items:
+        - Port
+        - PermitRootLogin
+        - MaxAuthTries
+        - MaxSessions
+        - PasswordAuthentication
+        - PermitEmptyPasswords
+        - X11Forwarding
+        - AuthorizedKeysFile
+      become: true
+
+    - name: Apply sshd config
+      template:
+        src: '{{ templates_path }}/ssh.conf.j2'
+        dest: /etc/ssh/sshd_config.d/01_ssh.conf
+        mode: '0600'
+      notify: Restart sshd
+      become: true

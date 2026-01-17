@@ -1,1 +1,2 @@
 ---
+SSH_PERMIT_ROOT_LOGIN: true

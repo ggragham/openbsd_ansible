@@ -1,0 +1,32 @@
+---
+- name: Disable ipv6
+  block:
+    - name: Disable IPv6 sysctl params
+      sysctl:
+        name: '{{ item }}'
+        value: '0'
+        state: present
+        reload: true
+        sysctl_file: /etc/sysctl.conf
+      loop:
+        - net.inet6.ip6.redirect
+        - net.inet6.ip6.forwarding
+        - net.inet6.ip6.mforwarding
+      become: true
+
+    - name: Stop and disable slaacd
+      service:
+        name: slaacd
+        state: stopped
+        enabled: false
+      become: true
+
+    - name: Disable IPv6 on interfaces
+      lineinfile:
+        path: /etc/hostname.{{ item }}
+        line: -inet6
+        insertafter: EOF
+        create: true
+      loop: '{{ network_interfaces }}'
+      notify: netstart interfaces
+      become: true

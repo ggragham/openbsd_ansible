@@ -1,2 +1,6 @@
 ---
 SSH_PERMIT_ROOT_LOGIN: true
+
+network_interfaces:
+  - em0
+  - vio0

@@ -1,0 +1,5 @@
+---
+- name: netstart interfaces
+  command: sh /etc/netstart {{ item }}
+  loop: '{{ network_interfaces }}'
+  become: true

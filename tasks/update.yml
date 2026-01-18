@@ -1,7 +1,13 @@
 ---
-- name: Apply all available system patches
-  syspatch:
-  become: true
+- name: Apply all available system patches (with workaround)
+  block:
+    - name: Apply all available system patches
+      syspatch:
+      become: true
+
+  rescue:
+    - name: Run workaround for syspatch errata 7.8/001
+      include_tasks: '{{ tasks_path }}/syspatch_errata_7.8_001_workaround.yml'
 
 - name: Update all packages on the system
   openbsd_pkg:

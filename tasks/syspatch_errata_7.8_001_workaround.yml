@@ -1,0 +1,47 @@
+---
+- name: Detect OpenBSD 7.8 errata 001_syspatch checkfs bug
+  set_fact:
+    syspatch_need_workaround: >-
+      {{
+        ('Installing patch 001_syspatch' in (ansible_failed_result.msg | default('')))
+        and
+        ('Read-only filesystem, aborting' in (ansible_failed_result.msg | default('')))
+      }}
+
+- name: Create syspatch wrapper with disabled checkfs()
+  shell: |
+    sed -e 's/.checkfs/#checkfs/g' /usr/sbin/syspatch > /root/syspatch
+  become: true
+  when: syspatch_need_workaround
+
+- name: Run wrapper syspatch (allow rc=2 when syspatch updated itself)
+  command: ksh /root/syspatch
+  register: syspatch_wrapper_run
+  become: true
+  when: syspatch_need_workaround
+  failed_when: syspatch_wrapper_run.rc not in [0, 2]
+
+- name: Remove wrapper
+  file:
+    path: /root/syspatch
+    state: absent
+  become: true
+  when: syspatch_need_workaround
+
+- name: Rebuild device database
+  command: /usr/sbin/dev_mkdb
+  become: true
+  when: syspatch_need_workaround
+
+- name: Re-run syspatch after workaround (install remaining patches)
+  syspatch:
+  become: true
+  when: syspatch_need_workaround
+
+- name: Fail if syspatch failed for unknown reason
+  fail:
+    msg: |
+      syspatch failed, but not OpenBSD 7.8 errata 001 bug.
+      Original error:
+      {{ ansible_failed_result.msg | default(ansible_failed_result) }}
+  when: not syspatch_need_workaround

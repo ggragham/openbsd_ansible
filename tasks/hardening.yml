@@ -12,6 +12,14 @@
   when: NODE_TYPE == 'server'
   become: true
 
+- name: Disable audio server
+  service:
+    name: sndiod
+    state: stopped
+    enabled: false
+  when: NODE_TYPE == 'server'
+  become: true
+
 - name: Configure umask
   lineinfile:
     path: /etc/profile

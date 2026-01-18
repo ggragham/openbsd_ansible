@@ -1,0 +1,10 @@
+---
+- name: Deploy pf config
+  template:
+    src: '{{ FIREWALL_PF_CONF_SRC }}'
+    dest: /etc/pf.conf
+    owner: root
+    group: wheel
+    mode: '0600'
+  notify: Apply pf rules
+  become: true

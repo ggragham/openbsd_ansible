@@ -24,6 +24,10 @@
       import_tasks: '{{ tasks_path }}/network.yml'
       tags: network
 
+    - name: Configure Firewall
+      import_tasks: '{{ tasks_path }}/firewall.yml'
+      tags: firewall
+
     - name: Update OpenBSD
       import_tasks: '{{ tasks_path }}/update.yml'
       tags: update
@@ -38,3 +42,6 @@
 
     - name: Restart network
       import_tasks: '{{ handlers_path }}/network.yml'
+
+    - name: Apply pf rules
+      import_tasks: '{{ handlers_path }}/firewall.yml'

@@ -9,3 +9,5 @@ PKGS_LIST:
   - curl
   - htop
   - tree
+
+FIREWALL_PF_CONF_SRC: '{{ assets_path }}/pf.conf.j2'

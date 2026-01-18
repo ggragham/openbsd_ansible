@@ -1,0 +1,48 @@
+######### MACROS #########
+wan_if = "vio0"
+lan_if = "vio1"
+# app_if = "vio2"
+web_port = "{ 80, 443 }"  # tcp
+ssh_port = {{ SSH_PORT }}  # tcp
+dns_port = 53  # tcp/udp
+ntp_port = 123  # udp
+# app_port = {{ APP_PORT }}  # tcp
+local_addr = "{ 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12 }"
+
+
+######### GLOBAL #########
+set block-policy drop
+set skip on lo0
+match in all scrub (no-df max-mss 1440)
+
+
+######### DEFAULT #########
+block quick inet6
+block all
+
+
+######### INGRESS #########
+## HTTP/HTTPS
+pass in on $lan_if proto tcp from $local_addr to ($lan_if) port $web_port keep state
+# pass in on $wan_if proto tcp from ($wan_if) port $web_port keep state
+# pass in proto tcp to port #web_port keep state
+
+## SSH
+pass in on $lan_if proto tcp from $lan_if:network to ($lan_if) port $ssh_port keep state
+# pass in on $lan_if proto tcp from $local_addr to ($lan_if) port $ssh_port keep state
+# pass in on $wan_if proto tcp from any to ($wan_if) port $ssh_port keep state
+# pass in proto tcp to port $ssh_port keep state
+
+
+######### EGRESS #########
+## HTTP/HTTPS
+pass out on $wan_if proto tcp to any port $web_port keep state
+
+## DNS
+pass out on $wan_if proto { udp tcp } to any port $dns_port keep state
+
+## NTP
+pass out on $wan_if proto udp to any port $ntp_port keep state
+
+## App
+# pass out on $app_if proto tcp to $app_if:network port $app_port keep state

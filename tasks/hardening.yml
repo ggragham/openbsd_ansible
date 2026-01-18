@@ -9,6 +9,7 @@
   loop:
     - kern.audio.record
     - kern.video.record
+  when: NODE_TYPE == 'server'
   become: true
 
 - name: Configure umask
